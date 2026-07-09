@@ -1,5 +1,5 @@
 ---
-import type { GetStaticPaths } from 'astro';
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import { getCollection, getEntry, render } from 'astro:content';
 
 import Badge from '@/components/Badge';
@@ -22,20 +22,24 @@ import {
 } from '@/utils/structuredData';
 
 // 1. Generate a new path for every collection entry
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths = (async () => {
   const tools = await getCollection('tools');
-  return tools.map((category) => ({
-    params: { slug: category.id },
+  return tools.map((tool) => ({
+    params: { slug: tool.id.replace(/\.md$/, '') },
+    props: { tool },
   }));
-};
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 // 2. For your template, you can get the entry directly from the prop
-const { slug } = Astro.params;
-const tool = await getEntry('tools', slug as string);
+const { tool } = Astro.props;
 
 if (!tool) {
-  throw new Error(`No category found for slug ${slug}`);
+  throw new Error(`No tool found for slug ${Astro.params.slug}`);
 }
+
+const slug = tool.id.replace(/\.md$/, '');
 
 const languages: Record<string, boolean> = tool.data?.languages || {};
 
@@ -112,7 +116,7 @@ const toolBadges = tool.data.badges
               Visit Website
             </Button>
           ) : (
-            <p>No Website</p>
+            ''
           )
         }
         {
@@ -173,7 +177,7 @@ const toolBadges = tool.data.badges
                     (category) =>
                       category && (
                         <Link
-                          href={`/categories/${category.id}`}
+                          href={`/categories/${category.id.replace(/\.md$/, '')}`}
                           className="no-underline"
                         >
                           <Badge variant="blue">{category.data.name}</Badge>
@@ -227,7 +231,7 @@ const toolBadges = tool.data.badges
       </div>
     </PageHeader>
     <main
-      class="prose prose-lg dark:prose-invert prose-headings:text-slate-700/90 dark:prose-headings:text-slate-300/90"
+      class="prose prose-lg dark:prose-invert prose-headings:text-slate-700/90 dark:prose-headings:text-slate-300/90 mt-8"
     >
       <Content />
 
@@ -240,7 +244,13 @@ const toolBadges = tool.data.badges
 
             <section class="md-grid-cols-2 grid gap-4 lg:grid-cols-3">
               {enrichedFeaturedArticles.map((article) => (
-                <ExternalArticle {...article.og} toolSlug={slug as string} />
+                <ExternalArticle
+                  {...article.og}
+                  url={article.url}
+                  title={article.title}
+                  date={article.date}
+                  toolSlug={slug as string}
+                />
               ))}
             </section>
           </>

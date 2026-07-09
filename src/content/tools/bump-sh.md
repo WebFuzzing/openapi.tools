@@ -1,9 +1,10 @@
 ---
 name: Bump.sh
 description: |
-  Bump.sh generates elegant documentation and changelogs from your OpenAPI descriptions. Git diff, for your API. Integrates with CI and Slack.
+  Bump.sh generates elegant documentation and changelogs from your OpenAPI descriptions, and MCP servers from your Arazzo documents. Git diff, for your API. Integrates with CI and Slack. **PAID ONLY**
 categories:
   - docs
+  - mcp
 link: https://bump.sh
 languages:
   saas: true
@@ -11,6 +12,7 @@ repo: https://github.com/bump-sh/cli
 oaiSpecs:
   oas: true
   overlays: true
+  arazzo: true
 oasVersions:
   v2: true
   v3: true
@@ -18,6 +20,7 @@ oasVersions:
   v3_2: false
 badges:
   - overlays-pioneer
+  - arazzo-support
 
 featuredArticles:
   - title: 'The 5 Best API Docs Tools in 2025'

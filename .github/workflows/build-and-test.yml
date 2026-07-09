@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -24,11 +24,11 @@ jobs:
 
       # Install pnpm (version from package.json packageManager field)
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       # Cache pnpm modules
       - name: Cache pnpm modules
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -51,9 +51,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # Check formatting with Prettier
+      # Check formatting with Oxfmt
       - name: Check formatting
-        run: pnpm prettier
+        run: pnpm fmt:check
 
       # Check for type and other errors
       - name: Type and error check
